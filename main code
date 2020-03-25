@@ -37,29 +37,53 @@ window= hamming(100);
 spectrogram(eeg_alpha,window,50,[],'yaxis','MinThreshold',-40,fs); colorbar
 title('Alpha component spectrogram');
 
+
 figure()
 window= hamming(100);
 spectrogram(eeg_beta,window,50,[],'yaxis','MinThreshold',-40,fs); colorbar
 title('Beta component spectrogram');
 
 % 
-% % 2. Derivative Filter.  
-% b = [-1 -2 0 2 1]/8;
-% eeg_der = filtfilt(b,1,eeg_alpha);
-% figure()
-% plot(t,eeg_der)
+% 2. Derivative Filter.  
+b = [-1 -2 0 2 1]/8;
+eeg_der = filtfilt(b,1,eeg_alpha);
+figure()
+plot(t,eeg_der)
+title('Derivative filter on alpha component');
+xlabel('Time(s)');
+ylabel('Amplitude')
+
 % 
-% % 3.Squaring
-% eeg_sq = (eeg_der).^2;
-% 
-% figure()
-% plot(t,eeg_sq)
-% 
-% % 4. Moving Average. 
-% t_ma =500; %ms. Window 
-%             
-% L=floor(t_ma*10^-3*fs); 
-% b = ones(1,L)/L;
-% eeg_ma = filtfilt(b,1,eeg_sq);
-% figure()
-% plot(t,eeg_ma)
+% 3.Squaring
+eeg_sq = (eeg_der).^2;
+figure()
+plot(t,eeg_sq)
+
+title('Square of Derivative filter output');
+xlabel('Time(s)');
+ylabel('Amplitude')
+
+% 4. Moving Average. 
+t_ma =2000; %ms. Window 
+            
+L=floor(t_ma*10^-3*fs); 
+b = ones(1,L)/L;
+eeg_ma = filtfilt(b,1,eeg_sq);
+figure()
+plot(t,eeg_ma)
+
+title('Moving average over filtered alpha component');
+xlabel('Time(s)');
+ylabel('Amplitude')
+
+
+thr=0.2;
+signalThr = eeg_ma>thr; 
+Open = find(diff(signalThr)>0);
+Close = find(diff(signalThr)<0);
+
+timeOpen= t(Open);
+timeClose= t(Close);
+
+fprintf("The eyes open for the first time at time %.2f s and close at %.2f s. \n",timeOpen(1), timeClose(1))
+fprintf("After a few seconds, the eyes open again at time %.2f s and close at %.2f s. \n",timeOpen(2), timeClose(2))
