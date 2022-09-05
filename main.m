@@ -1,6 +1,6 @@
 %%
-% Exercise 5
-% Students are asked to find the open/close stages
+% Exercise 
+% Finding the open/close stages
 clearvars, close all
 load('EEG.mat')
 fs = 256;
@@ -36,7 +36,6 @@ figure()
 window= hamming(100);
 spectrogram(eeg_alpha,window,50,[],'yaxis','MinThreshold',-40,fs); colorbar
 title('Alpha component spectrogram');
-
 
 figure()
 window= hamming(100);
